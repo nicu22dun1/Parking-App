@@ -113,12 +113,13 @@
                 </div>
 
                 <!-- parking enter/leave buttons -->
-                <div ng-if="availableParkingSpacesNo > 0" ng-class="{'col-md-3 offset-md-3': availableParkingSpacesNo == 0, 'col-md-3 offset-md-3': availableParkingSpacesNo != 0}">
+                <div ng-if="availableParkingSpacesNo > 0" ng-class="{'col-md-4 offset-md-4': availableParkingSpacesNo == 10, 'col-md-3 offset-md-3': availableParkingSpacesNo <= 10}">
                     <button type="button" class="btn btn-success w-100" ng-click="showEnterForm()">INTRA IN PARCARE</button>
                 </div>
                 <div ng-if="availableParkingSpacesNo != parkingLotConfig.totalParkingLots" ng-class="{'col-md-4 offset-md-4': availableParkingSpacesNo == 0, 'col-md-3': availableParkingSpacesNo > 0}">
                     <button type="button" class="btn btn-danger w-100" ng-click="showLeaveForm()">PARASESTE PARCAREA</button>
                 </div>
+
                 <!-- messages -->
                 <div class="col-md-4 offset-md-4 mt-4 text-center" ng-if="message">
                     <p ng-class="{'text-success': messageType == true, 'text-danger': messageType == false}">{{message}}</p>
@@ -132,6 +133,7 @@
                         <button class="btn btn-success mt-3" ng-click="occupyParkingLotSpace(parkingLot.carNumber)">Confirma</button>
                     </div>
                 </div>
+
                 <!-- leave parking form -->
                 <div class="col-md-4 offset-md-4 mt-4" ng-show="booleanLeaveForm">
                     <div class="form text-center">

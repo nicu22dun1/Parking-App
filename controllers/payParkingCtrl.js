@@ -29,7 +29,6 @@ payParking.controller('payParkingController', function payParkingController($sco
     var checkCountiesRegex = '^[A-z]{2}[0-9]{2}[A-z]{3}';
 
     // Public Functions
-    
     $scope.showEnterForm            = showEnterForm;
     $scope.showLeaveForm            = showLeaveForm;
     $scope.occupyParkingLotSpace    = occupyParkingLotSpace;
@@ -43,7 +42,6 @@ payParking.controller('payParkingController', function payParkingController($sco
     updateParkingLotSpaces();
 
     // Functions
-
     function getAvailableParkingLotSpaceId(){
         var keys = localStorageService.keys();
         for(i = 1; i <= localStorageService.get(0).totalParkingLots; i++){
