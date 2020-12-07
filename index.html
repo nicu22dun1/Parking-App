@@ -92,7 +92,7 @@
         <div class="container mb-5" ng-hide="showSummary">
             <button class="btn btn-warning" ng-click="clearData()">Resetare date</button>
             <button class="btn btn-info" ng-click="updateParkingLotSpaces()">Update</button>
-            <button class="btn btn-primary" ng-click="showConfig = !showConfig">Configurare</button>
+            <button class="btn btn-primary" ng-show="showConfig" ng-click="showConfig = !showConfig">Configurare</button>
             <hr>
             <!-- buttons to enter/leave parking -->
             <div class="row">
@@ -104,12 +104,14 @@
                         Bine ati venit! Avem disponibil 1 loc.
                     </div>
                 </div>
+                
                 <!-- alerts area -->
                 <div class="col-md-6 offset-md-3 full-parking" ng-if="availableParkingSpacesNo == 0">
                     <div class="alert alert-danger" role="alert">
                         Ne pare rau, momentan nu sunt locuri de parcare disponibile!
                     </div>
                 </div>
+
                 <!-- parking enter/leave buttons -->
                 <div ng-if="availableParkingSpacesNo > 0" ng-class="{'col-md-3 offset-md-3': availableParkingSpacesNo == 0, 'col-md-3 offset-md-3': availableParkingSpacesNo != 0}">
                     <button type="button" class="btn btn-success w-100" ng-click="showEnterForm()">INTRA IN PARCARE</button>
@@ -122,22 +124,8 @@
                     <p ng-class="{'text-success': messageType == true, 'text-danger': messageType == false}">{{message}}</p>
                 </div>
 
-                <!-- <div class="col-md-4 offset-md-4 mt-4 text-center" ng-show="showSuccessEnter">
-                    <p class="text-success">Va multumin pentru ca ati ales parcarea noastra!</p>
-                </div> -->
-                <!-- thank you after leaving parking -->
-                <!-- <div class="col-md-4 offset-md-4 mt-4 text-center" ng-show="showSuccessLeave">
-                    <p>Va multumin pentru ca ne-ati ales, va mai asteptam.<br>Sa aveti o zi minunata!</p>
-                </div> -->
-
                 <!-- enter parking form -->
                 <div class="col-md-4 offset-md-4 mt-4" ng-if="booleanEnterForm && !showSuccessEnter">
-                    <!-- <div class="text-center" ng-if="showInvalidNumber">
-                        <p class="text-danger">Numar de inmatriculare invalid! Va rugam verificati numarul de inmatriculare introdus.</p>
-                    </div>
-                    <div class="text-center" ng-if="showCarNumberExists">
-                        <p class="text-danger">Aceasta masina se afla deja in parcare! Verifica daca ai scris corect numarul de inmatriculare si incearca din nou.</p>
-                    </div> -->
                     <div class="form text-center">
                         <label class="text-center w-100" for="carNumber"><b>Pentru a ocupa un loc in parcare introduceti numarul de inmatriculare al masinii<br>(format: XX00YYY/X00YYY)</b></label>
                         <input id="carNumber" type="text" class="form-control" ng-model="parkingLot.carNumber">

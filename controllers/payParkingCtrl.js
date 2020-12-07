@@ -1,6 +1,7 @@
 // Define payParking controller for payParking application
 payParking.controller('payParkingController', function payParkingController($scope, localStorageService) {
 
+    // Initial setup
     $scope.parkingLotName      = 'Parking App - Hincu Nicusor';
     $scope.totalParkingLots    = 10;
     $scope.priceFirstHour      = 10;
@@ -11,7 +12,8 @@ payParking.controller('payParkingController', function payParkingController($sco
         'pricePerHour'     : $scope.pricePerHour,
         'parkingLotName'   : $scope.parkingLotName
     };
-    // localStorageService.add('0', $scope.parkingLotConfig);
+
+    localStorageService.add(0, $scope.parkingLotConfig);
 
     $scope.booleanEnterForm    = false;
     $scope.booleanLeaveForm    = false;
@@ -20,18 +22,11 @@ payParking.controller('payParkingController', function payParkingController($sco
     $scope.showInvalidNumber   = false;
     $scope.showCarNumberExists = false;
     $scope.showSummary         = false;
-    $scope.showConfig          = true;
+    $scope.showConfig          = false;
 
     // regex for Bucharest and other counties
     var checkBucharestRegex = '^[bB]{1}[0-9]{2,3}[A-z]{3}';
     var checkCountiesRegex = '^[A-z]{2}[0-9]{2}[A-z]{3}';
-
-    console.log('availableParkingSpacesNo: ',$scope.availableParkingSpacesNo);
-
-    console.log('booleanEnterForm: ',$scope.booleanEnterForm);
-    console.log('booleanLeaveForm: ',$scope.booleanEnterForm);
-    console.log('showSuccessEnter: ',$scope.showSuccessEnter);
-    console.log('showSuccessLeave: ',$scope.showSuccessEnter);
 
     // Public Functions
     
@@ -45,39 +40,21 @@ payParking.controller('payParkingController', function payParkingController($sco
     $scope.closeSummary             = closeSummary;
     $scope.confirmConfig            = confirmConfig;
 
-    // localStorageService.add('5',
-    //     {
-    //         'carNumber' : 'GL94DPH',
-    //         'entryDate' : Math.round(1607214018000 / 1000)
-    //     }
-    // );
-    // localStorageService.add('2',
-    //     {
-    //         'carNumber' : 'GL22RBR',
-    //         'entryDate' : Math.round(1607306718000 / 1000)
-    //     }
-    // );
-
     updateParkingLotSpaces();
-
-    console.log('availableParkingSpacesNo: ',$scope.availableParkingSpacesNo);
 
     // Functions
 
     function getAvailableParkingLotSpaceId(){
-        console.log('getAvailableParkingLotSpaceId');
         var keys = localStorageService.keys();
         for(i = 1; i <= localStorageService.get(0).totalParkingLots; i++){
             if( !keys.includes(i.toString()) ){
                 return i;
             }
         };
-
         return null;
     };
 
     function getParkingLotSpaceIdForCarNumber (carNumber){
-        console.log('getParkingLotSpaceIdForCarNumber(',carNumber,')');
         var keys = localStorageService.keys();
         var parkingLotId = '';
         keys.forEach(function(item, index){
@@ -87,12 +64,10 @@ payParking.controller('payParkingController', function payParkingController($sco
                 };
             };
         });
-        
         return parkingLotId??null;
     };
 
     function getParkingLotSpaces(){
-        console.log('getParkingLotSpaces');
         var parkingSpaces = [];
         for(i = 1; i <= localStorageService.get(0).totalParkingLots; i++){
             if( localStorageService.keys().includes(i.toString()) ){ // check if parking space is ocupied when iterating
@@ -111,7 +86,6 @@ payParking.controller('payParkingController', function payParkingController($sco
     };
 
     function getAvailableParkingSpotsNr(){
-        console.log('getAvailableParkingSpotsNr');
         return localStorageService.get(0).totalParkingLots - (localStorageService.length() - 1);
     };
 
@@ -129,10 +103,6 @@ payParking.controller('payParkingController', function payParkingController($sco
         if( $scope.showSuccessLeave == true ){
             $scope.showSuccessLeave = false;
         };
-        console.log('booleanEnterForm: ',$scope.booleanEnterForm);
-        console.log('booleanLeaveForm: ',$scope.booleanLeaveForm);
-        console.log('showSuccessEnter: ',$scope.showSuccessEnter);
-        console.log('showSuccessLeave: ',$scope.showSuccessEnter);
     };
 
     function showLeaveForm (){
@@ -144,19 +114,11 @@ payParking.controller('payParkingController', function payParkingController($sco
         if( $scope.showSuccessLeave == true ){
             $scope.showSuccessLeave = false;
         };
-
         $scope.message = '';
-
-        console.log('booleanEnterForm: ',$scope.booleanEnterForm);
-        console.log('booleanLeaveForm: ',$scope.booleanLeaveForm);
-        console.log('showSuccessEnter: ',$scope.showSuccessEnter);
-        console.log('showSuccessLeave: ',$scope.showSuccessLeave);
     };
 
     function occupyParkingLotSpace (carNumber){
         carNumber = carNumber.toUpperCase();
-        console.log('sa vedem: ',$scope.parkingLotSpaces);
-        
         var licensePlateRegex = chooseRegex(carNumber);
 
         if( carNumber.search(licensePlateRegex) != -1 ){ // if pattern found ( bucharest, others )
@@ -183,23 +145,13 @@ payParking.controller('payParkingController', function payParkingController($sco
         };
 
         $scope.booleanLeaveForm = false;
-        // $scope.showSuccessLeave = false;
-
         updateParkingLotSpaces();
-
-        console.log($scope.summary);
-        console.log('emptyParkingLotSpace(',carNumber,')',localStorageService.keys());
-        console.log('booleanEnterForm: ',$scope.booleanEnterForm);
-        console.log('booleanLeaveForm: ',$scope.booleanLeaveForm);
-        console.log('showSuccessEnter: ',$scope.showSuccessEnter);
-        console.log('showSuccessLeave: ',$scope.showSuccessLeave);
     };
 
     function emptyParkingLotSpace (carNumber){
-
         carNumber = carNumber.toUpperCase();
-
         var licensePlateRegex = chooseRegex(carNumber);
+
         if( carNumber.search(licensePlateRegex) != -1 ){ // if pattern found ( bucharest, others )
             
             var parkingLotSpaceId = getParkingLotSpaceIdForCarNumber(carNumber);
@@ -218,29 +170,12 @@ payParking.controller('payParkingController', function payParkingController($sco
             $scope.message = 'Numarul de inmatriculare '+ carNumber +' nu este corect!';
             $scope.messageType = false;
         };
-
-        // $scope.booleanLeaveForm = false;
-        // $scope.showSuccessLeave = true;
-        
-        console.log('summary before: ', $scope.summary);
         updateParkingLotSpaces();
-        // console.log('summary after: ', $scope.summary);
-
-
-
-        console.log('emptyParkingLotSpace(',carNumber,')',localStorageService.keys());
-        console.log('booleanEnterForm: ',$scope.booleanEnterForm);
-        console.log('booleanLeaveForm: ',$scope.booleanLeaveForm);
-        console.log('showSuccessEnter: ',$scope.showSuccessEnter);
-        console.log('showSuccessLeave: ',$scope.showSuccessLeave);
-        console.log('availableParkingSpacesNo: ',$scope.availableParkingSpacesNo);
     };
 
     function clearData(){
         localStorageService.clearAll();
         location.reload();
-        $scope.showConfig = true;
-        // redirect + config page
     };
 
     function chooseRegex(carNumber){
@@ -272,15 +207,9 @@ payParking.controller('payParkingController', function payParkingController($sco
             var elapsedHours = Math.floor(minutesElapsed / 60);
             var subsequentMinutes = Math.ceil(minutesElapsed % 60);
 
-            console.log('elapsed hours: ', elapsedHours);
-            console.log('elapsed minutes: ', Math.ceil((minutesElapsed - 60) / 60));
-            console.log('elapsed subsequent minutes: ', subsequentMinutes);
-
             summary.subsequentTimeString = elapsedHours.toString() + ' ore ' + (subsequentMinutes == 0 ? 'si 0 minute' : ( 'si ' + subsequentMinutes.toString() + ' minute'));
-            console.log('timp stationat ',summary.subsequentTimeString);
             summary.totalInvoiceValue = priceFirstHour + ( Math.ceil((minutesElapsed - 60) / 60) * pricePerHour );
         }
-        
         return summary;
     };
 
@@ -314,12 +243,6 @@ payParking.controller('payParkingController', function payParkingController($sco
         
         localStorageService.add('0', $scope.parkingLotConfig);
         updateParkingLotSpaces();
-        
-        console.log('config lots: ', $scope.totalParkingLots);
-        console.log('config first hour: ', $scope.priceFirstHour);
-        console.log('config per hour: ', $scope.pricePerHour);
-        console.log('config name: ', $scope.parkingLotName);
-        
     };
 
 });
