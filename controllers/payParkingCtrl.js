@@ -11,7 +11,7 @@ payParking.controller('payParkingController', function payParkingController($sco
         'pricePerHour'     : $scope.pricePerHour,
         'parkingLotName'   : $scope.parkingLotName
     };
-    localStorageService.add('0', $scope.parkingLotConfig);
+    // localStorageService.add('0', $scope.parkingLotConfig);
 
     $scope.booleanEnterForm    = false;
     $scope.booleanLeaveForm    = false;
@@ -250,6 +250,8 @@ payParking.controller('payParkingController', function payParkingController($sco
     };
 
     function calculateSummary(entryTime, carNumber, parkingLotSpaceId){
+        var priceFirstHour = $scope.priceFirstHour;
+        var pricePerHour   = $scope.pricePerHour;
         var date = Math.round(new Date().getTime() / 1000); // get current date for summary in seconds
         var summary = {};
         summary.entryDate       = timeConverterUnixToDate(entryTime);
@@ -260,7 +262,7 @@ payParking.controller('payParkingController', function payParkingController($sco
 
         var minutesElapsed = Math.ceil((date - entryTime) / 60); // no. minutes
         if( minutesElapsed <= 60 ){
-            summary.totalInvoiceValue = 10;
+            summary.totalInvoiceValue = priceFirstHour;
             if( minutesElapsed == 1 ){
                 summary.subsequentTimeString = minutesElapsed.toString() + ' minut';
             }else{
@@ -276,7 +278,7 @@ payParking.controller('payParkingController', function payParkingController($sco
 
             summary.subsequentTimeString = elapsedHours.toString() + ' ore ' + (subsequentMinutes == 0 ? 'si 0 minute' : ( 'si ' + subsequentMinutes.toString() + ' minute'));
             console.log('timp stationat ',summary.subsequentTimeString);
-            summary.totalInvoiceValue = 10 + ( Math.ceil((minutesElapsed - 60) / 60) * 5 );
+            summary.totalInvoiceValue = priceFirstHour + ( Math.ceil((minutesElapsed - 60) / 60) * pricePerHour );
         }
         
         return summary;
