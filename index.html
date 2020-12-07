@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" ng-app="payParking">
+  <head>
+    <meta charset="utf-8">
+    <title>Pay Parking Angular App</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/app.css" />
+    <!-- Angular -->
+    <script src="assets/angular/angular.js"></script>
+    <script src="assets/angular/angular-route.min.js"></script>
+    <!-- jQuery -->
+    <script src="assets/jquery/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/angular/angular-storage.min.js"></script>
+  </head>
+  <body class="bg-light" ng-controller="payParkingController">
+
+    <!-- CONFIG CONTENT -->
+    <div class="main-content config" ng-show="showConfig">
+        <div class="container mb-5">
+            <h1 class="display-4 text-center mt-5 mb-4">Configurare parametrii</h1>
+        </div>
+        <div class="container mb-5">
+            <div class="col-md-6 offset-md-3">
+                <p class="font-weight-bold mb-0">Nume aplicatie:</p>
+                <input class="w-100 form-control" type="text" ng-model="parkingLotName">
+                <br>
+                <p class="font-weight-bold mb-0">Locuri totale de parcare:</p>
+                <input class="w-100 form-control" type="number" ng-model="totalParkingLots">
+                <br>
+                <p class="font-weight-bold mb-0">Tarif prima ora (lei):</p>
+                <input class="w-100 form-control" type="number" ng-model="priceFirstHour">
+                <br>
+                <p class="font-weight-bold mb-0">Tarif ora ce nu include prima ora (lei):</p>
+                <input class="w-100 form-control" type="number" ng-model="pricePerHour">
+                <br>
+            </div>
+            <div class="w-100 text-center" ng-if="parkingLotName && totalParkingLots && priceFirstHour && pricePerHour">
+                <button class="btn btn-success" ng-click="confirmConfig()">Confirma parametrii</button>
+            </div>
+        </div>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content" ng-show="!showConfig">
+        <div class="container mb-5">
+            <h1 class="display-4 text-center mt-5 mb-4">{{parkingLotName}}</h1>
+        </div>
+        <div class="container mb-5" ng-show="showSummary">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div class="summaryPreview p-4 shadow-sm">
+                        <div class="text-center">
+                            <h2 class="text-center">Sumar parcare pentru #{{summary.carNumber}}</h2>
+                        </div>
+                        <br>
+                        <div class="summaryLefRight">
+                            <p class="font-weight-bold mb-0">Loc Parcare</p>
+                            <p class="font-weight-bold mb-0">#{{summary.parkingLotSpaceId}}</p>
+                        </div>
+                        <hr>
+                        <div class="summaryLefRight">
+                            <p class="font-weight-bold mb-0">Data intrare</p>
+                            <p class="font-weight-bold mb-0">{{summary.entryDate}}</p>
+                        </div>
+                        <hr>
+                        <div class="summaryLefRight">
+                            <p class="font-weight-bold mb-0">Data iesire</p>
+                            <p class="font-weight-bold mb-0">{{summary.leaveDate}}</p>
+                        </div>
+                        <hr>
+                        <div class="summaryLefRight">
+                            <p class="font-weight-bold mb-0">Durata stationare</p>
+                            <p class="font-weight-bold mb-0">{{summary.subsequentTimeString}}</p>
+                        </div>
+                        <hr>
+                        <br>
+                        <div class="summaryLefRight">
+                            <h5 class="font-weight-bold">Total</h5>
+                            <h5 class="font-weight-bold">{{summary.totalInvoiceValue}} lei</h5>
+                        </div>
+                        <br>
+                        <div class="w-100 text-center">
+                            <button class="btn btn-danger" ng-click="closeSummary()">Inchide</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mb-5" ng-hide="showSummary">
+            <button class="btn btn-warning" ng-click="clearData()">Resetare date</button>
+            <button class="btn btn-info" ng-click="updateParkingLotSpaces()">Update</button>
+            <button class="btn btn-primary" ng-click="showConfig = !showConfig">Configurare</button>
+            <hr>
+            <!-- buttons to enter/leave parking -->
+            <div class="row">
+                <div class="col-md-6 offset-md-3 spots-remained" ng-if="availableParkingSpacesNo > 0">
+                    <div ng-if="availableParkingSpacesNo > 1" class="alert alert-success text-center" role="alert">
+                        Bine ati venit! Avem disponibile {{availableParkingSpacesNo}} locuri.
+                    </div>
+                    <div ng-if="availableParkingSpacesNo == 1" class="alert alert-success text-center" role="alert">
+                        Bine ati venit! Avem disponibil 1 loc.
+                    </div>
+                </div>
+                <!-- alerts area -->
+                <div class="col-md-6 offset-md-3 full-parking" ng-if="availableParkingSpacesNo == 0">
+                    <div class="alert alert-danger" role="alert">
+                        Ne pare rau, momentan nu sunt locuri de parcare disponibile!
+                    </div>
+                </div>
+                <!-- parking enter/leave buttons -->
+                <div ng-if="availableParkingSpacesNo > 0" ng-class="{'col-md-3 offset-md-3': availableParkingSpacesNo == 0, 'col-md-3 offset-md-3': availableParkingSpacesNo != 0}">
+                    <button type="button" class="btn btn-success w-100" ng-click="showEnterForm()">INTRA IN PARCARE</button>
+                </div>
+                <div ng-if="availableParkingSpacesNo != parkingLotConfig.totalParkingLots" ng-class="{'col-md-4 offset-md-4': availableParkingSpacesNo == 0, 'col-md-3': availableParkingSpacesNo > 0}">
+                    <button type="button" class="btn btn-danger w-100" ng-click="showLeaveForm()">PARASESTE PARCAREA</button>
+                </div>
+                <!-- messages -->
+                <div class="col-md-4 offset-md-4 mt-4 text-center" ng-if="message">
+                    <p ng-class="{'text-success': messageType == true, 'text-danger': messageType == false}">{{message}}</p>
+                </div>
+
+                <!-- <div class="col-md-4 offset-md-4 mt-4 text-center" ng-show="showSuccessEnter">
+                    <p class="text-success">Va multumin pentru ca ati ales parcarea noastra!</p>
+                </div> -->
+                <!-- thank you after leaving parking -->
+                <!-- <div class="col-md-4 offset-md-4 mt-4 text-center" ng-show="showSuccessLeave">
+                    <p>Va multumin pentru ca ne-ati ales, va mai asteptam.<br>Sa aveti o zi minunata!</p>
+                </div> -->
+
+                <!-- enter parking form -->
+                <div class="col-md-4 offset-md-4 mt-4" ng-if="booleanEnterForm && !showSuccessEnter">
+                    <!-- <div class="text-center" ng-if="showInvalidNumber">
+                        <p class="text-danger">Numar de inmatriculare invalid! Va rugam verificati numarul de inmatriculare introdus.</p>
+                    </div>
+                    <div class="text-center" ng-if="showCarNumberExists">
+                        <p class="text-danger">Aceasta masina se afla deja in parcare! Verifica daca ai scris corect numarul de inmatriculare si incearca din nou.</p>
+                    </div> -->
+                    <div class="form text-center">
+                        <label class="text-center w-100" for="carNumber"><b>Pentru a ocupa un loc in parcare introduceti numarul de inmatriculare al masinii<br>(format: XX00YYY/X00YYY)</b></label>
+                        <input id="carNumber" type="text" class="form-control" ng-model="parkingLot.carNumber">
+                        <button class="btn btn-success mt-3" ng-click="occupyParkingLotSpace(parkingLot.carNumber)">Confirma</button>
+                    </div>
+                </div>
+                <!-- leave parking form -->
+                <div class="col-md-4 offset-md-4 mt-4" ng-show="booleanLeaveForm">
+                    <div class="form text-center">
+                        <label class="text-center w-100" for="carNumber"><b>Pentru a parasi parcarea introduceti numarul de inmatriculare al masinii<br>(format: XX00YYY/X00YYY)</b></label>
+                        <input id="carNumber" type="text" class="form-control" ng-model="parkingLot.carNumber">
+                        <button class="btn btn-success mt-3" ng-click="emptyParkingLotSpace(parkingLot.carNumber)">Confirma</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <h2 class="text-center mb-2">Vizualizare locuri parcare</h2>
+            <div class="row">
+                <div class="col-md-12">
+                    <div ng-repeat="parkingSpot in parkingLotSpaces track by $index" class="parking-spot">
+                        <p class="mb-1 text-center font-weight-bold">Loc de parcare #{{$index + 1}}</p>
+                        <div class="car-div" ng-class="{'bg-success': !parkingSpot.carNumber, 'bg-danger': parkingSpot.carNumber}">
+                            <p class="car-number">{{parkingSpot.carNumber}}</p>
+                            <img ng-if="parkingSpot.carNumber" class="img-fluid car-image" src="img/car.svg"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+    <!-- Controllers -->
+    <script src="controllers/payParkingCtrl.js"></script>
+
+  </body>
+</html>
