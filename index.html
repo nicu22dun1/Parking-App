@@ -29,13 +29,13 @@
                 <input class="w-100 form-control" type="text" ng-model="parkingLotName">
                 <br>
                 <p class="font-weight-bold mb-0">Locuri totale de parcare:</p>
-                <input class="w-100 form-control" type="number" ng-model="totalParkingLots">
+                <input ng-min="1" class="w-100 form-control" type="number" ng-model="totalParkingLots">
                 <br>
                 <p class="font-weight-bold mb-0">Tarif prima ora (lei):</p>
-                <input class="w-100 form-control" type="number" ng-model="priceFirstHour">
+                <input ng-min="1" class="w-100 form-control" type="number" ng-model="priceFirstHour">
                 <br>
                 <p class="font-weight-bold mb-0">Tarif ora ce nu include prima ora (lei):</p>
-                <input class="w-100 form-control" type="number" ng-model="pricePerHour">
+                <input ng-min="1" class="w-100 form-control" type="number" ng-model="pricePerHour">
                 <br>
             </div>
             <div class="w-100 text-center" ng-if="parkingLotName && totalParkingLots && priceFirstHour && pricePerHour">
@@ -57,9 +57,10 @@
                         </div>
                         <br>
                         <div class="summaryLefRight">
-                            <p class="font-weight-bold mb-0">Loc Parcare</p>
-                            <p class="font-weight-bold mb-0">#{{summary.parkingLotSpaceId}}</p>
+                            <h5 class="font-weight-bold mb-0">Loc Parcare</h5>
+                            <h5 class="font-weight-bold mb-0">#{{summary.parkingLotSpaceId}}</h5>
                         </div>
+                        <br>
                         <hr>
                         <div class="summaryLefRight">
                             <p class="font-weight-bold mb-0">Data intrare</p>
@@ -113,7 +114,7 @@
                 </div>
 
                 <!-- parking enter/leave buttons -->
-                <div ng-if="availableParkingSpacesNo > 0" ng-class="{'col-md-4 offset-md-4': availableParkingSpacesNo == 10, 'col-md-3 offset-md-3': availableParkingSpacesNo <= 10}">
+                <div ng-if="availableParkingSpacesNo > 0" ng-class="{'col-md-4 offset-md-4': availableParkingSpacesNo == parkingLotConfig.totalParkingLots, 'col-md-3 offset-md-3': availableParkingSpacesNo <= parkingLotConfig.totalParkingLots}">
                     <button type="button" class="btn btn-success w-100" ng-click="showEnterForm()">INTRA IN PARCARE</button>
                 </div>
                 <div ng-if="availableParkingSpacesNo != parkingLotConfig.totalParkingLots" ng-class="{'col-md-4 offset-md-4': availableParkingSpacesNo == 0, 'col-md-3': availableParkingSpacesNo > 0}">

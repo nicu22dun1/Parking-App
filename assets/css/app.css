@@ -38,3 +38,11 @@
     justify-content: space-between;
     align-items: center;
 }
+
+input.ng-invalid{
+    border-color: red;
+}
+
+input.ng-valid{
+    border-color: #218838;
+}
