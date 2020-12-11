@@ -18,7 +18,7 @@ payParking.controller('payParkingController', function payParkingController($sco
         $scope.totalParkingLots    = 10;
         $scope.priceFirstHour      = 10;
         $scope.pricePerHour        = 5;
-        $scope.showConfig          = true; 
+        $scope.showConfig          = true;
 
     };
 
@@ -30,7 +30,7 @@ payParking.controller('payParkingController', function payParkingController($sco
     };
 
     // regex for Bucharest and other counties
-    var checkBucharestRegex = '^[bB]{1}[0-9]{2,3}[A-z]{3}';
+    var checkBucharestRegex = '^[bB]{1}[0-9]{2,3}[A-Za-z]{3}';
     var checkCountiesRegex  = '^[A-z]{2}[0-9]{2}[A-z]{3}';
 
     // Public Functions
